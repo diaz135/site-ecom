@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Dashboard Administrateur</h2>
+<div class="row text-center">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <h4>{{ total_orders }}</h4>
+                <p>Total Commandes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <h4>{{ total_products }}</h4>
+                <p>Produits en Boutique</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow">
+            <div class="card-body">
+                <h4>{{ total_users }}</h4>
+                <p>Clients inscrits</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>Dernières Commandes</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in latest_orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+            <td>{{ order.total }} CFA</td>
+            <td>{{ order.get_status_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+<a href="{% url 'dashboard:add_product' %}" class="btn btn-primary mb-4">➕ Ajouter un nouveau produit</a>
+<a href="{% url 'dashboard:create_notification' %}" class="btn btn-warning mb-4">🔔 Envoyer Notification Client</a>

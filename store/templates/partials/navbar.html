@@ -1,0 +1,205 @@
+<style>
+    /* Palette moderne et épurée inspirée de l'art islamique */
+    :root {
+        --islamic-sage: #8a9a8a;
+        --islamic-sand: #d3c9b8;
+        --islamic-clay: #b8a692;
+        --islamic-charcoal: #3a3a3a;
+        --islamic-ivory: #f8f5f0;
+        --islamic-gold: #c4a86f;
+    }
+
+    .navbar-modern {
+        background-color: var(--islamic-ivory);
+        box-shadow: 0 2px 15px rgba(58, 58, 58, 0.08);
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .navbar-modern.scrolled {
+        background-color: rgba(248, 245, 240, 0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    .navbar-modern .navbar-brand {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-modern .navbar-brand:hover {
+        color: var(--islamic-sage);
+    }
+
+    .navbar-modern .navbar-brand span {
+        color: var(--islamic-gold);
+    }
+
+    .navbar-modern .navbar-toggler {
+        border-color: var(--islamic-sand);
+    }
+
+    .navbar-modern .nav-link {
+        color: var(--islamic-charcoal);
+        font-weight: 500;
+        position: relative;
+        margin: 0 8px;
+        padding: 8px 12px;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-modern .nav-link::before {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--islamic-sage);
+        transition: width 0.3s ease;
+    }
+
+    .navbar-modern .nav-link:hover {
+        color: var(--islamic-sage);
+    }
+
+    .navbar-modern .nav-link:hover::before {
+        width: 100%;
+    }
+
+    .dropdown-menu-modern {
+        background-color: var(--islamic-ivory);
+        border: 1px solid var(--islamic-sand);
+        border-radius: 4px;
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.1);
+        padding: 8px 0;
+    }
+
+    .dropdown-item-modern {
+        color: var(--islamic-charcoal);
+        padding: 8px 16px;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+    .dropdown-item-modern:hover {
+        background-color: var(--islamic-sand);
+        color: var(--islamic-charcoal);
+        padding-left: 20px;
+    }
+
+    .dropdown-divider-modern {
+        border-top: 1px solid var(--islamic-sand);
+        margin: 8px 0;
+    }
+
+    .notification-badge-modern {
+        background-color: var(--islamic-sage) !important;
+        font-size: 0.7rem;
+        animation: subtle-pulse 2s infinite;
+    }
+
+    @keyframes subtle-pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+    }
+
+    /* Logo agrandi sans affecter la navbar */
+    .navbar-logo {
+        height: 80px;           /* Taille du logo */
+        margin-top: -10px;      /* Permet de dépasser sans élargir la navbar */
+        margin-bottom: -10px;
+    }
+</style>
+
+<script>
+    // Effet de transition au scroll
+    window.addEventListener('scroll', function () {
+        const navbar = document.querySelector('.navbar-modern');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-modern fixed-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'store:home' %}">
+            <img src="/media/photo/waf.png" alt="Logo WAFSHOP" class="navbar-logo me-2">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'store:home' %}">
+                        <span class="me-1 d-none d-sm-inline">🏠</span> Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cart:cart_detail' %}">
+                        <span class="me-1 d-none d-sm-inline">🛒</span> Panier
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                        <span class="me-1 d-none d-sm-inline">👤</span> Compte
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-modern dropdown-menu-end" aria-labelledby="userMenu">
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern" href="{% url 'accounts:profile' %}">
+                                <span class="me-2">🔧</span> Profil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern" href="{% url 'accounts:client_dashboard' %}">
+                                <span class="me-2">📊</span> Tableau de bord
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern position-relative" href="{% url 'accounts:notifications' %}">
+                                <span class="me-2">🔔</span> Notifications
+                                {% if notif_count > 0 %}
+                                <span class="position-absolute top-50 end-0 translate-middle-y badge notification-badge-modern me-2">
+                                    {{ notif_count }}
+                                </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider-modern"></li>
+                        <li>
+                            <a class="dropdown-item dropdown-item-modern" href="{% url 'accounts:logout' %}">
+                                <span class="me-2">🚪</span> Déconnexion
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:login' %}">
+                        <span class="me-1 d-none d-sm-inline">🔑</span> Connexion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:register' %}">
+                        <span class="me-1 d-none d-sm-inline">📝</span> Inscription
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

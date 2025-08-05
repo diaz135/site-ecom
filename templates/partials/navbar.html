@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'store:home' %}">🕌 IslamicStore</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'store:home' %}">🏠 Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'cart:cart_detail' %}">🛒 Panier</a></li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">👤 Profil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:client_dashboard' %}">📊 Mon tableau de bord</a></li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="{% url 'accounts:notifications' %}">🔔 Notifications
+                            {% if notif_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ notif_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:logout' %}">🚪 Déconnexion</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">🔑 Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">📝 S'inscrire</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

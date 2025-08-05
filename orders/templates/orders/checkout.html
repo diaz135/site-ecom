@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .checkout-container {
+        background: linear-gradient(rgba(248, 245, 240, 0.9),)
+                    url('/static/images/islamic-pattern-light.jpg') center/cover fixed;
+        min-height: 100vh;
+        padding: 3rem 2rem;
+    }
+
+    .checkout-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .checkout-title::after {
+        content: '';
+        position: absolute;
+        width: 80px;
+        height: 3px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--islamic-sage);
+    }
+
+    .order-summary {
+        background-color: var(--islamic-ivory);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--islamic-sand);
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.05);
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .order-table th {
+        text-align: left;
+        padding: 12px 15px;
+        background-color: var(--islamic-sage);
+        color: white;
+    }
+
+    .order-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--islamic-sand);
+    }
+
+    .total-row {
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .shipping-form {
+        background-color: var(--islamic-ivory);
+        border-radius: 10px;
+        padding: 2rem;
+        border: 1px solid var(--islamic-sand);
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.05);
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--islamic-sand);
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--islamic-sage);
+        box-shadow: 0 0 0 3px rgba(138, 154, 138, 0.1);
+    }
+
+    .payment-method-group {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border: 1px solid var(--islamic-sand);
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .payment-method-group:hover {
+        border-color: var(--islamic-sage);
+    }
+
+    .payment-method-group.selected {
+        border: 2px solid var(--islamic-sage);
+        background-color: rgba(138, 154, 138, 0.05);
+    }
+
+    .payment-method-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .payment-method-icon {
+        font-size: 1.5rem;
+        color: var(--islamic-sage);
+    }
+
+    .payment-method-details {
+        margin-left: 2rem;
+        font-size: 0.9rem;
+        color: var(--islamic-clay);
+        display: none;
+    }
+
+    .payment-method-radio:checked ~ .payment-method-details {
+        display: block;
+    }
+
+    .submit-btn {
+        background-color: var(--islamic-sage);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1.5rem;
+        cursor: pointer;
+    }
+
+    .submit-btn:hover {
+        background-color: var(--islamic-charcoal);
+        transform: translateY(-2px);
+    }
+
+    .secure-payment {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 1rem;
+        color: var(--islamic-clay);
+    }
+
+    .payment-methods {
+        display: flex;
+        gap: 15px;
+        margin-top: 1.5rem;
+    }
+
+    .payment-method-img {
+        width: 50px;
+        height: 30px;
+        object-fit: contain;
+        filter: grayscale(30%);
+    }
+
+    /* Styles pour Stripe Elements */
+    .StripeElement {
+        box-sizing: border-box;
+        height: 40px;
+        padding: 10px 12px;
+        border: 1px solid var(--islamic-sand);
+        border-radius: 6px;
+        background-color: white;
+        margin-top: 1rem;
+    }
+
+    .StripeElement--focus {
+        border-color: var(--islamic-sage);
+        box-shadow: 0 0 0 3px rgba(138, 154, 138, 0.1);
+    }
+
+    .StripeElement--invalid {
+        border-color: #fa755a;
+    }
+
+    .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+    }
+
+    #card-errors {
+        color: #fa755a;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-container {
+            padding: 1.5rem;
+        }
+        
+        .order-table td, .order-table th {
+            padding: 10px;
+        }
+    }
+</style>
+
+<div class="checkout-container">
+    <div class="container">
+        <h2 class="checkout-title">Paiement sécurisé</h2>
+        
+        <form method="POST" id="payment-form" action="{% url 'orders:checkout' %}">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="shipping-form">
+                        <h4><i class="fas fa-truck"></i> Informations de livraison</h4>
+                        <hr style="border-color: var(--islamic-sand); margin: 1.5rem 0;">
+                        
+                        <div class="form-group">
+                            <input type="text" name="full_name" class="form-control" placeholder="Nom complet" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" name="phone" class="form-control" placeholder="Téléphone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea name="address" class="form-control" rows="3" placeholder="Adresse complète" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" name="city" class="form-control" placeholder="Ville" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="country" class="form-control" placeholder="Pays" required>
+                        </div>
+                        
+                        
+                        <div class="form-group">
+                            <textarea name="notes" class="form-control" rows="2" placeholder="Notes supplémentaires (optionnel)"></textarea>
+                        </div>
+                        
+                        <h4><i class="fas fa-credit-card"></i> Méthode de paiement</h4>
+                        <hr style="border-color: var(--islamic-sand); margin: 1.5rem 0;">
+                        
+                        <div class="payment-method-group">
+                            <label class="payment-method-label">
+                                <input type="radio" name="payment_method" value="cod" class="payment-method-radio" checked>
+                                <i class="fas fa-money-bill-wave payment-method-icon"></i>
+                                <span>Paiement à la livraison</span>
+                            </label>
+                            <div class="payment-method-details">
+                                Payez en espèces lorsque vous recevez votre commande.
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method-group">
+                            <label class="payment-method-label">
+                                <input type="radio" name="payment_method" value="momo" class="payment-method-radio">
+                                <i class="fas fa-mobile-alt payment-method-icon"></i>
+                                <span>Mobile Money</span>
+                            </label>
+                            <div class="payment-method-details">
+                                Vous serez redirigé vers votre application mobile pour effectuer le paiement.
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method-group">
+                            <label class="payment-method-label">
+                                <input type="radio" name="payment_method" value="card" class="payment-method-radio" id="card-payment-option">
+                                <i class="fas fa-credit-card payment-method-icon"></i>
+                                <span>Carte Bancaire (Stripe)</span>
+                            </label>
+                            <div class="payment-method-details">
+                                Paiement sécurisé par carte Visa, Mastercard ou autre.
+                                <!-- Conteneur pour Stripe Elements -->
+                                <div id="card-element-container" style="display: none; margin-top: 1rem;">
+                                    <div id="card-element"></div>
+                                    <div id="card-errors" role="alert"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="order-summary">
+                        <h4><i class="fas fa-receipt"></i> Récapitulatif de commande</h4>
+                        <hr style="border-color: var(--islamic-sand); margin: 1.5rem 0;">
+                        
+                        <table class="order-table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Qté</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.sub_total }} CFA</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Sous-total :</span>
+                                <span>{{ subtotal }} CFA</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Livraison :</span>
+                                <span>{% if shipping_cost %}{{ shipping_cost }} CFA{% else %}Gratuite{% endif %}</span>
+                            </div>
+                            <hr style="border-color: var(--islamic-sand); margin: 1rem 0;">
+                            <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 1.2rem;">
+                                <span>Total :</span>
+                                <span>{{ total }} CFA</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="submit-button">
+                            <i class="fas fa-lock"></i> Valider la commande
+                        </button>
+                        
+                        <div class="secure-payment">
+                            <i class="fas fa-shield-alt"></i>
+                            <small>Paiement 100% sécurisé</small>
+                        </div>
+                        
+                        <div class="payment-methods">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visa/visa-original.svg" class="payment-method-img" alt="Visa">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mastercard/mastercard-original.svg" class="payment-method-img" alt="Mastercard">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/stripe/stripe-original.svg" class="payment-method-img" alt="Stripe">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Inclure Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Inclure Stripe.js v3 -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    // Configuration de Stripe
+    const stripe = Stripe('{{ stripe_pub_key }}');
+    let elements;
+    let card;
+    
+    // Initialiser Stripe Elements seulement si nécessaire
+    function initializeStripeElements() {
+        if (!elements) {
+            elements = stripe.elements();
+            card = elements.create('card', {
+                style: {
+                    base: {
+                        color: '#32325d',
+                        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                        fontSmoothing: 'antialiased',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#aab7c4'
+                        }
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a'
+                    }
+                }
+            });
+            card.mount('#card-element');
+            
+            // Gestion des erreurs de carte
+            card.addEventListener('change', function(event) {
+                const displayError = document.getElementById('card-errors');
+                if (event.error) {
+                    displayError.textContent = event.error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+        }
+    }
+
+    // Gestion du changement de méthode de paiement
+    document.querySelectorAll('.payment-method-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-method-group').forEach(group => {
+                group.classList.remove('selected');
+            });
+            
+            if (this.checked) {
+                this.closest('.payment-method-group').classList.add('selected');
+                
+                // Mettre à jour le texte du bouton
+                const submitBtn = document.getElementById('submit-button');
+                if (this.value === 'card') {
+                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Payer avec Stripe';
+                    // Afficher Stripe Elements
+                    document.getElementById('card-element-container').style.display = 'block';
+                    initializeStripeElements();
+                } else if (this.value === 'momo') {
+                    submitBtn.innerHTML = '<i class="fas fa-mobile-alt"></i> Payer avec Mobile Money';
+                    document.getElementById('card-element-container').style.display = 'none';
+                } else {
+                    submitBtn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Commander (paiement à la livraison)';
+                    document.getElementById('card-element-container').style.display = 'none';
+                }
+            }
+        });
+    });
+
+    // Gestion de la soumission du formulaire
+    document.getElementById('payment-form').addEventListener('submit', async function(e) {
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        
+        // Si paiement par carte, utiliser Stripe
+        if (paymentMethod === 'card') {
+            e.preventDefault();
+            
+            const {token, error} = await stripe.createToken(card);
+            
+            if (error) {
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = error.message;
+            } else {
+                // Ajouter le token au formulaire et soumettre
+                const form = document.getElementById('payment-form');
+                const hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'stripeToken');
+                hiddenInput.setAttribute('value', token.id);
+                form.appendChild(hiddenInput);
+                form.submit();
+            }
+        }
+        // Pour les autres méthodes, le formulaire s'envoie normalement
+    });
+
+    // Sélectionner visuellement le premier groupe au chargement
+    document.querySelector('.payment-method-group').classList.add('selected');
+</script>
+
+{% endblock %}

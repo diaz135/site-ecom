@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .product-detail-container {
+        background: linear-gradient(rgba(248, 245, 240, 0.9),)
+                    url('/static/images/islamic-pattern-light.jpg') center/cover fixed;
+        min-height: 100vh;
+        padding: 3rem 2rem;
+    }
+
+    .product-card {
+        background-color: var(--islamic-ivory);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(58, 58, 58, 0.1);
+        overflow: hidden;
+        border: 1px solid var(--islamic-sand);
+    }
+
+    .product-image-container {
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: #f9f9f9;
+        position: relative;
+    }
+
+    .product-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: var(--islamic-gold);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    .product-info {
+        padding: 2.5rem;
+    }
+
+    .product-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .product-title::after {
+        content: '';
+        position: absolute;
+        width: 80px;
+        height: 3px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--islamic-sage);
+    }
+
+    .product-price {
+        color: var(--islamic-gold);
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 1.5rem 0;
+    }
+
+    .product-description {
+        color: var(--islamic-clay);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 2rem;
+    }
+
+    .add-to-cart-btn {
+        background-color: var(--islamic-sage);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: var(--islamic-charcoal);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.1);
+    }
+
+    .wishlist-btn {
+        background-color: transparent;
+        border: 1px solid var(--islamic-sage);
+        color: var(--islamic-sage);
+        padding: 12px 20px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-btn:hover {
+        background-color: rgba(138, 154, 138, 0.1);
+    }
+
+    .product-meta {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--islamic-sand);
+    }
+
+    .meta-item {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+
+    .meta-label {
+        font-weight: 600;
+        color: var(--islamic-charcoal);
+        min-width: 120px;
+    }
+
+    .meta-value {
+        color: var(--islamic-clay);
+    }
+
+    @media (max-width: 992px) {
+        .product-image-container {
+            height: 400px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .product-image-container {
+            height: 300px;
+            padding: 1rem;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="product-detail-container">
+    <div class="container">
+        <div class="product-card">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="product-image-container">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="product-image" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="/static/images/default-product.jpg" class="product-image" alt="Image par défaut">
+                        {% endif %}
+                        
+                        {% if product.is_new %}
+                            <span class="product-badge">Nouveau</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="product-info">
+                        <h1 class="product-title">{{ product.name }}</h1>
+                        
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Référence:</span>
+                                <span class="meta-value">#{{ product.id }}</span>
+                            </div>
+                            {% if product.category %}
+                            <div class="meta-item">
+                                <span class="meta-label">Catégorie:</span>
+                                <span class="meta-value">{{ product.category.name }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="meta-item">
+                                <span class="meta-label">Disponibilité:</span>
+                                <span class="meta-value">En stock</span>
+                            </div>
+                        </div>
+                        
+                        <div class="product-price">{{ product.price }} CFA</div>
+                        
+                        <p class="product-description">{{ product.description }}</p>
+                        
+                        <div class="action-buttons">
+                            <a href="{% url 'cart:add_cart' product.id %}" class="add-to-cart-btn">
+                                <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                            </a>
+                            <button class="wishlist-btn">
+                                <i class="far fa-heart"></i> Liste de souhaits
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section produits similaires -->
+        <div class="related-products" style="margin-top: 4rem;">
+            <h3 style="color: var(--islamic-charcoal); margin-bottom: 2rem; border-bottom: 2px solid var(--islamic-sand); padding-bottom: 10px;">
+                Produits similaires
+            </h3>
+            <div class="row">
+                <!-- Boucle pour les produits similaires -->
+                <div class="col-md-3 mb-4">
+                    <div class="product-card" style="height: 100%;">
+                        <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+                            <img src="/static/images/related-product.jpg" style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 10px;" alt="Produit similaire">
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <h5 style="color: var(--islamic-charcoal); font-size: 1rem;">Nom du produit similaire</h5>
+                            <p style="color: var(--islamic-gold); font-weight: 600;">15 000 CFA</p>
+                            <a href="#" style="background-color: var(--islamic-sage); color: white; padding: 8px 15px; border-radius: 4px; display: inline-block; margin-top: 10px; font-size: 0.9rem;">Voir</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Ajoutez d'autres produits similaires -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclure Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    // Script pour le bouton "Liste de souhaits"
+    document.querySelector('.wishlist-btn').addEventListener('click', function() {
+        // Ajouter la logique AJAX pour la liste de souhaits
+        alert('Produit ajouté à votre liste de souhaits !');
+    });
+</script>
+
+{% endblock %}

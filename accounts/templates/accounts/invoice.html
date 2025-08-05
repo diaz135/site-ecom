@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th, .table td { border: 1px solid #000; padding: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>IslamicStore</h2>
+        <p>Facture n°{{ order.id }} - {{ order.created_at|date:"d/m/Y" }}</p>
+    </div>
+    <p><strong>Client :</strong> {{ order.full_name }}</p>
+    <p><strong>Adresse :</strong> {{ order.address }}, {{ order.city }}, {{ order.country }}</p>
+    <p><strong>Téléphone :</strong> {{ order.phone }}</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Sous-total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }} CFA</td>
+                <td>{{ item.price|floatformat:0|add:item.quantity|mul:item.price }} CFA</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 style="text-align: right;">Total : {{ order.total }} CFA</h4>
+</body>
+</html>

@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .register-container {
+        background: 
+            linear-gradient(rgba(248, 245, 240, 0.4), rgba(248, 245, 240, 0.4)),
+            url("{% static 'images/islamic-bg-pattern.jpg' %}") center/cover fixed no-repeat;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .register-card {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(58, 58, 58, 0.15);
+        padding: 3rem;
+        width: 100%;
+        max-width: 540px;
+        border: 1px solid var(--islamic-gold-light);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.7s ease-out forwards;
+    }
+
+    .register-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 120px;
+        height: 120px;
+        background: var(--islamic-gold);
+        clip-path: polygon(0 0, 100% 0, 100% 100%);
+        opacity: 0.08;
+    }
+
+    .register-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 80px;
+        background: var(--islamic-sage);
+        clip-path: polygon(0 100%, 100% 100%, 0 0);
+        opacity: 0.08;
+    }
+
+    .register-title {
+        color: var(--islamic-charcoal);
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-weight: 700;
+        font-size: 2.2rem;
+        position: relative;
+        font-family: 'Aref Ruqaa', serif;
+    }
+
+    .register-title::after {
+        content: '';
+        position: absolute;
+        width: 120px;
+        height: 4px;
+        bottom: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(to right, var(--islamic-gold), var(--islamic-sage));
+        border-radius: 4px;
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        color: var(--islamic-charcoal);
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        padding-left: 8px;
+        font-family: 'Amiri', serif;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.98);
+        border: 2px solid var(--islamic-sand-light);
+        padding: 16px 20px;
+        border-radius: 10px;
+        transition: all 0.4s ease;
+        font-size: 1rem;
+        width: 100%;
+        color: var(--islamic-charcoal);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        font-family: 'Amiri', serif;
+    }
+
+    .form-control:focus {
+        border-color: var(--islamic-gold);
+        box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.2);
+        background-color: #fff;
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: #b8b8b8;
+        font-style: italic;
+        opacity: 0.7;
+    }
+
+    .input-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--islamic-gold);
+        opacity: 0.7;
+    }
+
+    .register-btn {
+        background: linear-gradient(135deg, var(--islamic-gold), var(--islamic-sage));
+        color: white;
+        width: 100%;
+        padding: 18px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.4s ease;
+        margin-top: 2rem;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 20px rgba(210, 180, 140, 0.3);
+        text-transform: uppercase;
+        font-family: 'Aref Ruqaa', serif;
+    }
+
+    .register-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(210, 180, 140, 0.4);
+        background: linear-gradient(135deg, var(--islamic-sage), var(--islamic-gold));
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 2.5rem;
+        color: var(--islamic-clay);
+        font-size: 1rem;
+        font-family: 'Amiri', serif;
+    }
+
+    .login-link a {
+        color: var(--islamic-gold);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-bottom: 2px dotted var(--islamic-gold);
+        padding-bottom: 3px;
+    }
+
+    .login-link a:hover {
+        color: var(--islamic-sage);
+        border-bottom-color: var(--islamic-sage);
+    }
+
+    .error-message {
+        color: #d9534f;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        padding-left: 8px;
+        font-style: italic;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @media (max-width: 576px) {
+        .register-card {
+            padding: 2.5rem 1.8rem;
+        }
+        .register-title {
+            font-size: 1.9rem;
+        }
+        .form-control {
+            padding: 14px 18px;
+        }
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <h2 class="register-title">Créer un compte</h2>
+        
+        <form method="POST" class="register-form">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div style="background-color: rgba(217, 83, 79, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #d9534f;">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="error-message">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Nom d'utilisateur</label>
+                <div style="position: relative;">
+                    {{ form.username }}
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                <div style="position: relative;">
+                    {{ form.email }}
+                    <i class="fas fa-envelope input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Mot de passe</label>
+                <div style="position: relative;">
+                    {{ form.password }}
+                    <i class="fas fa-lock input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.phone.id_for_label }}">Téléphone</label>
+                <div style="position: relative;">
+                    {{ form.phone }}
+                    <i class="fas fa-phone input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.address.id_for_label }}">Adresse</label>
+                <div style="position: relative;">
+                    {{ form.address }}
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.city.id_for_label }}">Ville</label>
+                <div style="position: relative;">
+                    {{ form.city }}
+                    <i class="fas fa-city input-icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.country.id_for_label }}">Pays</label>
+                <div style="position: relative;">
+                    {{ form.country }}
+                    <i class="fas fa-globe input-icon"></i>
+                </div>
+            </div>
+            
+            <button type="submit" class="register-btn">
+                <i class="fas fa-user-plus" style="margin-right: 8px;"></i> S'inscrire
+            </button>
+            
+            <div class="login-link">
+                Déjà un compte ? <a href="{% url 'accounts:login' %}">Connectez-vous ici</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Ajoutez ces liens dans votre base.html pour les icônes Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+{% endblock %}

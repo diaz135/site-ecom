@@ -1,0 +1,38 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📦 Gestion des Commandes</h2>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Client</th>
+                <th>Total</th>
+                <th>Mode de paiement</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user.username }}</td>
+                <td>{{ order.total }} CFA</td>
+                <td>{{ order.get_payment_method_display }}</td>
+                <td>
+                    <span class="badge bg-info">{{ order.get_status_display }}</span>
+                </td>
+                <td>{{ order.created_at }}</td>
+                <td>
+                    <a href="{% url 'dashboard:update_order_status' order.id 'validee' %}" class="btn btn-success btn-sm">Valider</a>
+                    <a href="{% url 'dashboard:update_order_status' order.id 'livree' %}" class="btn btn-primary btn-sm">Marquer Livrée</a>
+                    <a href="{% url 'dashboard:update_order_status' order.id 'annulee' %}" class="btn btn-danger btn-sm">Annuler</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

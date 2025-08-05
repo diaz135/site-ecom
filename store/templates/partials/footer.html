@@ -1,0 +1,151 @@
+<style>
+    /* Styles de base du footer */
+    .footer-modern {
+        background-color: var(--islamic-charcoal);
+        color: var(--islamic-ivory);
+        padding: 2.5rem 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-top: 1px solid var(--islamic-sand);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    /* Conteneur principal */
+    .footer-modern .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Liens de navigation */
+    .footer-modern .footer-links {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-modern .footer-links a {
+        color: var(--islamic-ivory);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 0.3rem 0;
+        position: relative;
+    }
+
+    .footer-modern .footer-links a::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--islamic-gold);
+        transition: width 0.3s ease;
+    }
+
+    .footer-modern .footer-links a:hover {
+        color: var(--islamic-gold);
+    }
+
+    .footer-modern .footer-links a:hover::after {
+        width: 100%;
+    }
+
+    /* Icônes sociales */
+    .footer-modern .social-icons {
+        display: flex;
+        gap: 1.2rem;
+        justify-content: center;
+    }
+
+    .footer-modern .social-icons a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--islamic-ivory);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .footer-modern .social-icons a:hover {
+        background-color: var(--islamic-gold);
+        color: var(--islamic-charcoal);
+        transform: translateY(-3px);
+    }
+
+    /* Copyright */
+    .footer-modern .copyright {
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: var(--islamic-ivory);
+        opacity: 0.8;
+        margin-top: 0.5rem;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .footer-modern .footer-links {
+            gap: 1rem;
+            flex-direction: column;
+        }
+        
+        .footer-modern {
+            padding: 2rem 0;
+        }
+    }
+</style>
+
+<footer class="footer-modern">
+    <div class="container">
+        <!-- Liens de navigation -->
+        <div class="footer-links">
+            <a href="{% url 'store:home' %}">Accueil</a>
+            <a href="{% url 'store:about' %}">À propos</a>
+            <a href="{% url 'store:contact' %}">Contact</a>
+            <a href="{% url 'store:terms' %}">CGU</a>
+            <a href="{% url 'store:privacy' %}">Confidentialité</a>
+        </div>
+        
+        <!-- Réseaux sociaux -->
+        <div class="social-icons">
+            <a href="https://web.facebook.com/aubonheurdesesclients/?_rdc=1&_rdr#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/optimistewatt77/" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+
+        <!-- Copyright -->
+        <p class="copyright">
+            &copy; <span id="current-year">2025</span> WAFSHOP | Tous droits réservés.
+        </p>
+    </div>
+</footer>
+
+<script>
+    // Mise à jour automatique de l'année du copyright
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Votre panier 🛒</h2>
+{% if cart_items %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix</th>
+                <th>Sous-total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price }} CFA</td>
+                <td>{{ item.sub_total }} CFA</td>
+                <td>
+                    <a href="{% url 'cart:remove_cart' item.product.id %}" class="btn btn-danger btn-sm">-1</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h4>Total : {{ total }} CFA</h4>
+{% else %}
+    <p>Votre panier est vide !</p>
+{% endif %}
+{% endblock %}
+<a href="{% url 'orders:checkout' %}" class="btn btn-success">Passer au paiement</a>
+<form method="POST" class="mb-3">
+    {% csrf_token %}
+    <input type="text" name="coupon_code" placeholder="Code promo" class="form-control w-50 d-inline-block">
+    <button type="submit" class="btn btn-sm btn-dark">Appliquer</button>
+</form>
+
+{% if coupon %}
+    <p>Code promo appliqué : <strong>{{ coupon.code }}</strong> (-{{ coupon.discount }}%)</p>
+    <p>Remise : {{ discount_amount|floatformat:0 }} CFA</p>
+{% endif %}

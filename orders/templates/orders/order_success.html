@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-success">🎉 Commande Validée !</h2>
+    <p>Merci <strong>{{ order.user.username }}</strong> pour votre commande.</p>
+
+    <h4>Détails de la commande :</h4>
+    <ul>
+        <li><strong>Numéro :</strong> {{ order.id }}</li>
+        <li><strong>Total :</strong> {{ order.total }} CFA</li>
+        <li><strong>Méthode de paiement :</strong> {{ order.get_payment_method_display }}</li>
+        <li><strong>Adresse :</strong> {{ order.address }}</li>
+    </ul>
+
+    {% if order.payment_method == "cod" %}
+        <div class="alert alert-warning">
+            Veuillez préparer <strong>{{ order.total }} CFA</strong> pour le paiement à la livraison 💵
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Votre paiement a été reçu. Merci !
+        </div>
+    {% endif %}
+
+    <a href="{% url 'store:home' %}" class="btn btn-primary mt-3">Retour à la boutique</a>
+</div>
+{% endblock %}

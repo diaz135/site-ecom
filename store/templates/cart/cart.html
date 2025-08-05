@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .cart-container {
+        background: linear-gradient(rgba(248, 245, 240, 0.9), )
+                    url('/static/images/islamic-pattern-light.jpg') center/cover fixed;
+        min-height: 100vh;
+        padding: 3rem 2rem;
+    }
+
+    .cart-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .cart-title::after {
+        content: '';
+        position: absolute;
+        width: 80px;
+        height: 3px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--islamic-sage);
+    }
+
+    .cart-table {
+        background-color: var(--islamic-ivory);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.05);
+        border: 1px solid var(--islamic-sand);
+        margin-bottom: 2rem;
+    }
+
+    .cart-table thead {
+        background-color: var(--islamic-sage);
+        color: white;
+    }
+
+    .cart-table th {
+        padding: 15px;
+        font-weight: 500;
+    }
+
+    .cart-table td {
+        padding: 15px;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--islamic-sand);
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .product-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid var(--islamic-sand);
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: all 0.2s ease;
+    }
+
+    .decrease-btn {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .decrease-btn:hover {
+        background-color: #f5c6cb;
+    }
+
+    .increase-btn {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .increase-btn:hover {
+        background-color: #c3e6cb;
+    }
+
+    .remove-btn {
+        color: #dc3545;
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        transition: all 0.2s ease;
+    }
+
+    .remove-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .summary-card {
+        background-color: var(--islamic-ivory);
+        border-radius: 10px;
+        padding: 2rem;
+        border: 1px solid var(--islamic-sand);
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.05);
+    }
+
+    .summary-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--islamic-sand);
+        padding-bottom: 10px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .total-row {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--islamic-sand);
+    }
+
+    .checkout-btn {
+        background-color: var(--islamic-sage);
+        color: white;
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+        background-color: var(--islamic-charcoal);
+        transform: translateY(-2px);
+    }
+
+    .coupon-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .coupon-input {
+        flex-grow: 1;
+        border: 1px solid var(--islamic-sand);
+        padding: 10px 15px;
+        border-radius: 6px;
+    }
+
+    .coupon-btn {
+        background-color: var(--islamic-gold);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .discount-badge {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 8px 15px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 1rem;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 3rem;
+        color: var(--islamic-clay);
+    }
+
+    .empty-cart-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--islamic-sand);
+    }
+
+    .continue-shopping {
+        background-color: var(--islamic-sand);
+        color: var(--islamic-charcoal);
+        padding: 10px 20px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .continue-shopping:hover {
+        background-color: var(--islamic-clay);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .product-info {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .cart-table td, .cart-table th {
+            padding: 10px;
+        }
+    }
+</style>
+
+<div class="cart-container">
+    <div class="container">
+        <h2 class="cart-title">Votre panier 🛒</h2>
+        
+        {% if cart_items %}
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="cart-table">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Prix</th>
+                                <th>Quantité</th>
+                                <th>Sous-total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="product-info">
+                                        {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" class="product-img" alt="{{ item.product.name }}">
+                                        {% else %}
+                                        <img src="/static/images/default-product.jpg" class="product-img" alt="Image par défaut">
+                                        {% endif %}
+                                        <div>
+                                            <h5>{{ item.product.name }}</h5>
+                                            {% if item.product.category %}
+                                            <small class="text-muted">{{ item.product.category.name }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ item.product.price }} CFA</td>
+                                <td>
+                                    <div class="quantity-control">
+                                        <a href="{% url 'cart:remove_cart' item.product.id %}" class="quantity-btn decrease-btn">-</a>
+                                        <span>{{ item.quantity }}</span>
+                                        <a href="{% url 'cart:add_cart' item.product.id %}" class="quantity-btn increase-btn">+</a>
+                                    </div>
+                                </td>
+                                <td>{{ item.sub_total }} CFA</td>
+                                <td>
+                                    <a href="{% url 'cart:full_remove' item.product.id %}" class="remove-btn" title="Supprimer">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <h3 class="summary-title">Récapitulatif</h3>
+                    
+                    <form method="POST" class="coupon-form">
+                        {% csrf_token %}
+                        <input type="text" name="coupon_code" placeholder="Code promo" class="coupon-input" 
+                               value="{% if coupon %}{{ coupon.code }}{% endif %}">
+                        <button type="submit" class="coupon-btn">Appliquer</button>
+                    </form>
+                    
+                    {% if coupon %}
+                    <div class="discount-badge">
+                        Code promo appliqué : <strong>{{ coupon.code }}</strong> (-{{ coupon.discount }}%)
+                        <br>
+                        Remise : {{ discount_amount|floatformat:0 }} CFA
+                    </div>
+                    {% endif %}
+                    
+                    <div class="summary-row">
+                        <span>Sous-total :</span>
+                        <span>{{ subtotal }} CFA</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison :</span>
+                        <span>{% if shipping_cost %}{{ shipping_cost }} CFA{% else %}Gratuite{% endif %}</span>
+                    </div>
+                    
+                    <div class="summary-row total-row">
+                        <span>Total :</span>
+                        <span>{{ total }} CFA</span>
+                    </div>
+                    
+                    <a href="{% url 'orders:checkout' %}" class="checkout-btn">
+                        <i class="fas fa-credit-card"></i> Finaliser la commande
+                    </a>
+                    
+                    <a href="{% url 'store:home' %}" class="continue-shopping">
+                        <i class="fas fa-arrow-left"></i> Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3>Votre panier est vide</h3>
+            <p>Parcourez notre boutique pour découvrir nos produits</p>
+            <a href="{% url 'store:home' %}" class="continue-shopping">
+                <i class="fas fa-arrow-left"></i> Commencer mes achats
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Inclure Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+{% endblock %}
+
+<form method="POST" action="{% url 'cart:cart_detail' %}">
+    {% csrf_token %}
+    <label for="coupon">Code promo :</label>
+    <input type="text" name="coupon_code" placeholder="Entrez votre code">
+    <button type="submit">Appliquer</button>
+  </form>
+  
+  {% if coupon_applied %}
+      <p style="color:green;">Code <strong>{{ coupon_applied.code }}</strong> appliqué : -{{ coupon_applied.discount }}%</p>
+  {% elif invalid_coupon %}
+      <p style="color:red;">Code invalide ou expiré.</p>
+  {% endif %}
+  <p>Total : {{ total }} CFA</p>
+{% if discount %}
+  <p>Réduction : -{{ discount }} CFA</p>
+{% endif %}
+<p><strong>Total à payer : {{ grand_total }} CFA</strong></p>

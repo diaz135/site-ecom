@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .profile-container {
+        background: 
+            linear-gradient(rgba(248, 245, 240, 0.9), rgba(248, 245, 240, 0.9)),
+            url("{% static 'images/islamic-pattern-light.jpg' %}") center/cover no-repeat;
+        min-height: 100vh;
+        padding: 3rem 1rem;
+    }
+
+    .profile-card {
+        background-color: var(--islamic-ivory);
+        border-radius: 16px;
+        box-shadow: 0 15px 40px rgba(58, 58, 58, 0.12);
+        padding: 2.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        border: 1px solid var(--islamic-gold-light);
+    }
+
+    .profile-header {
+        color: var(--islamic-charcoal);
+        margin-bottom: 2.5rem;
+        position: relative;
+        padding-bottom: 15px;
+        font-family: 'Aref Ruqaa', serif;
+    }
+
+    .profile-header::after {
+        content: '';
+        position: absolute;
+        width: 120px;
+        height: 3px;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(to right, var(--islamic-gold), var(--islamic-sage));
+        border-radius: 3px;
+    }
+
+    .welcome-message {
+        font-size: 1.2rem;
+        color: var(--islamic-clay);
+        margin-bottom: 2rem;
+        font-family: 'Amiri', serif;
+    }
+
+    .info-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    @media (max-width: 768px) {
+        .info-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .user-info-card, .update-form {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid var(--islamic-sand);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    }
+
+    .info-item {
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .info-item i {
+        position: absolute;
+        left: 0;
+        top: 0.3rem;
+        color: var(--islamic-gold);
+        font-size: 1.1rem;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--islamic-charcoal);
+        margin-bottom: 0.3rem;
+        font-family: 'Amiri', serif;
+    }
+
+    .info-value {
+        color: var(--islamic-clay);
+        font-size: 1.05rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        font-family: 'Amiri', serif;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--islamic-sand);
+        border-radius: 8px;
+        background-color: rgba(255,255,255,0.9);
+        transition: all 0.3s ease;
+        font-family: 'Amiri', serif;
+    }
+
+    .form-control:focus {
+        border-color: var(--islamic-gold);
+        box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.2);
+        outline: none;
+    }
+
+    .btn {
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--islamic-gold), var(--islamic-sage));
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--islamic-sage), var(--islamic-gold));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(210, 180, 140, 0.3);
+    }
+
+    .btn-secondary {
+        background-color: var(--islamic-charcoal);
+        color: white;
+        margin-left: 1rem;
+    }
+
+    .btn-secondary:hover {
+        background-color: #2a2a2a;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(58, 58, 58, 0.2);
+    }
+
+    .btn i {
+        margin-right: 8px;
+    }
+
+    .orders-section {
+        margin-top: 3rem;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .orders-table thead {
+        background: linear-gradient(to right, var(--islamic-sage), var(--islamic-green));
+        color: white;
+    }
+
+    .orders-table th {
+        padding: 16px 20px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .orders-table td {
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--islamic-sand-light);
+    }
+
+    .orders-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .orders-table tr:hover {
+        background-color: rgba(138, 154, 138, 0.08);
+    }
+
+    .status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background-color: rgba(212, 175, 55, 0.15);
+        color: #d4af37;
+    }
+
+    .status-completed {
+        background-color: rgba(138, 154, 138, 0.15);
+        color: var(--islamic-sage);
+    }
+
+    .no-orders {
+        text-align: center;
+        padding: 3rem;
+        color: var(--islamic-clay);
+        font-style: italic;
+        background-color: rgba(255,255,255,0.7);
+        border-radius: 10px;
+        border: 1px dashed var(--islamic-sand);
+    }
+
+    .no-orders i {
+        font-size: 2rem;
+        color: var(--islamic-sand);
+        margin-bottom: 1rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            padding: 1.8rem;
+        }
+        
+        .orders-table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            margin-left: 0 !important;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>Mon Profil</h2>
+        </div>
+        
+        <div class="welcome-message">
+            <p>As-salamu alaykum <strong>{{ request.user.username }}</strong> !</p>
+        </div>
+        
+        <div class="info-section">
+            <!-- Section Informations Utilisateur -->
+            <div class="user-info-card">
+                <h3 class="profile-header" style="font-size: 1.5rem;">Mes Informations</h3>
+                
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <div class="info-label">Nom d'utilisateur</div>
+                    <div class="info-value">{{ request.user.username }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ request.user.email }}</div>
+                </div>
+                
+                {% if user_profile.phone %}
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <div class="info-label">Téléphone</div>
+                    <div class="info-value">{{ user_profile.phone }}</div>
+                </div>
+                {% endif %}
+                
+                {% if user_profile.address %}
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="info-label">Adresse</div>
+                    <div class="info-value">{{ user_profile.address }}</div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Section Formulaire de Mise à Jour -->
+            <form method="post" class="update-form">
+                {% csrf_token %}
+                <h3 class="profile-header" style="font-size: 1.5rem;">Mettre à jour</h3>
+                
+                <div class="form-group">
+                    <label for="id_phone">Téléphone</label>
+                    {{ form.phone }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_address">Adresse</label>
+                    {{ form.address }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_city">Ville</label>
+                    {{ form.city }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_country">Pays</label>
+                    {{ form.country }}
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                    <a href="{% url 'accounts:logout' %}" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Section Commandes -->
+        <div class="orders-section">
+            <h3 class="profile-header">Mes Commandes</h3>
+            
+            {% if orders %}
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Date</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ order.total }} CFA</td>
+                            <td>
+                                <span class="status status-{{ order.status|lower }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-orders">
+                    <i class="far fa-folder-open"></i>
+                    <p>Aucune commande passée pour le moment.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Ajoutez ces liens dans votre base.html pour les polices et icônes -->
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+{% endblock %}

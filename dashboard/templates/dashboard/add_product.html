@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Ajouter un Produit</h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Créer le produit</button>
+</form>
+<a href="{% url 'dashboard:dashboard_home' %}" class="btn btn-secondary mt-3">Retour au Dashboard</a>
+{% endblock %}

@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .home-container {
+        background: linear-gradient(rgba(248, 245, 240, 0.8),) 
+                    url('/static/images/islamic-pattern-light.jpg') center/cover fixed;
+        min-height: 100vh;
+        padding: 3rem 2rem;
+    }
+
+    .welcome-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .welcome-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 15px;
+        display: inline-block;
+    }
+
+    .welcome-title::after {
+        content: '';
+        position: absolute;
+        width: 120px;
+        height: 3px;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(to right, var(--islamic-gold), var(--islamic-sage));
+    }
+
+    .welcome-subtitle {
+        color: var(--islamic-clay);
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+
+    /* Catégories */
+    .categories-nav {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .category-btn {
+        background-color: var(--islamic-ivory);
+        border: 1px solid var(--islamic-sand);
+        color: var(--islamic-charcoal);
+        padding: 8px 20px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .category-btn:hover, .category-btn.active {
+        background-color: var(--islamic-sage);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Cartes de produits */
+    .product-card {
+        background-color: var(--islamic-ivory);
+        border-radius: 10px;
+        border: 1px solid var(--islamic-sand);
+        box-shadow: 0 5px 15px rgba(58, 58, 58, 0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(58, 58, 58, 0.1);
+    }
+
+    .img-container {
+        height: 220px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f9f9f9;
+        border-bottom: 1px solid var(--islamic-sand);
+        position: relative;
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: var(--islamic-gold);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-img {
+        transform: scale(1.05);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .product-description {
+        color: var(--islamic-clay);
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+        flex-grow: 1;
+    }
+
+    .product-price {
+        color: var(--islamic-gold);
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+
+    .details-btn {
+        background-color: var(--islamic-sage);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .details-btn:hover {
+        background-color: var(--islamic-charcoal);
+        transform: translateY(-2px);
+    }
+
+    .add-to-cart-btn {
+        background-color: transparent;
+        border: 1px solid var(--islamic-sage);
+        color: var(--islamic-sage);
+        padding: 8px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: var(--islamic-sage);
+        color: white;
+    }
+
+    /* Messages d'absence de produits */
+    .no-products {
+        text-align: center;
+        color: var(--islamic-clay);
+        padding: 3rem;
+        font-style: italic;
+    }
+
+    /* Sections spéciales */
+    .featured-section {
+        margin: 3rem 0;
+        padding: 2rem 0;
+        border-top: 1px solid var(--islamic-sand);
+        border-bottom: 1px solid var(--islamic-sand);
+    }
+
+    .section-title {
+        color: var(--islamic-charcoal);
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+
+    .testimonials {
+        margin: 3rem 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .welcome-title {
+            font-size: 1.8rem;
+        }
+        
+        .img-container {
+            height: 180px;
+        }
+    }
+</style>
+
+<div class="home-container">
+    <!-- Section d'accueil -->
+    <div class="welcome-section">
+        <h1 class="welcome-title">Bienvenue sur WAFSHOP <span>🕌</span></h1>
+        <p class="welcome-subtitle">Découvrez notre collection de produits authentiques et de qualité</p>
+    </div>
+
+    <!-- Barre de recherche -->
+    <form method="GET" class="mb-4 d-flex justify-content-center">
+        <input type="text" name="q" class="form-control me-2 w-50" placeholder="Rechercher un produit..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+    </form>
+
+    <!-- Navigation par catégories -->
+    <div class="categories-nav">
+        <button class="category-btn active">Tous les produits</button>
+        <button class="category-btn">Livres islamiques</button>
+        <button class="category-btn">Vêtements</button>
+        <button class="category-btn">Décoration</button>
+        <button class="category-btn">Accessoires</button>
+    </div>
+
+    <!-- Liste des produits -->
+    <div class="row">
+        {% if products %}
+            {% for product in page_obj %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="product-card">
+                        <div class="img-container">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
+                            {% else %}
+                                <img src="/static/images/default-product.jpg" class="product-img" alt="Image par défaut">
+                            {% endif %}
+                            {% if product.is_new %}
+                                <span class="product-badge">Nouveau</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="product-title">{{ product.name }}</h5>
+                            <p class="product-description">{{ product.short_description|truncatechars:80 }}</p>
+                            <p class="product-price">{{ product.price }} CFA</p>
+                            <div class="product-footer">
+                                <a href="{% url 'store:product_detail' product.id product.slug %}" class="details-btn">
+                                    Voir détails
+                                </a>
+                                <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-products">
+                <p><i class="fas fa-box-open"></i> Aucun produit disponible pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Section produits phares -->
+    <div class="featured-section">
+        <h2 class="section-title">Nos Produits Phares</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="product-card">
+                    <div class="img-container">
+                        <img src="/static/images/featured-1.jpg" class="product-img" alt="Produit phare 1">
+                        <span class="product-badge">Populaire</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="product-title">Coran Luxe Edition</h5>
+                        <p class="product-description">Coran de haute qualité avec couverture en cuir et dorures</p>
+                        <p class="product-price">15 000 CFA</p>
+                        <div class="product-footer">
+                            <a href="#" class="details-btn">Voir détails</a>
+                            <button class="add-to-cart-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Ajoutez d'autres produits phares ici -->
+        </div>
+    </div>
+
+    <!-- Section témoignages -->
+    <div class="testimonials">
+        <h2 class="section-title">Ce Que Disent Nos Clients</h2>
+        <div class="row">
+            <!-- Témoignages à ajouter ici -->
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-center">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Précédent">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Suivant">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+
+<!-- Scripts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    // Gestion du panier
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            // Ajouter la logique AJAX pour ajouter au panier
+            alert('Produit ajouté au panier !');
+        });
+    });
+
+    // Filtrage par catégorie
+    document.querySelectorAll('.category-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+            // Ajouter la logique de filtrage ici
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: wafshop
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn islamic_store.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: islamic_store.settings
+      - key: SECRET_KEY
+        value: django-insecure-axd=#dcri^7(+2py-4hansvaewi*d*u%cuxjuitp%-(^&#*zwh
+      - key: DEBUG
+        value: False

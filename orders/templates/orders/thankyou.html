@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>✅ Paiement réussi !</h2>
+<p>Merci pour votre commande sur IslamicStore. Qu'Allah vous bénisse 🤲</p>
+<a href="{% url 'store:home' %}" class="btn btn-primary">Retour à la boutique</a>
+{% endblock %}
+
+<h2>Commande validée !</h2>
+<p>Merci pour votre commande.</p>
+<p>Méthode de paiement : {{ order.get_payment_method_display }}</p>
+<p>Total à payer : {{ order.total }} CFA</p>
+
+{% if order.payment_method == "cod" %}
+    <p>⚠️ Vous paierez à la livraison.</p>
+{% endif %}

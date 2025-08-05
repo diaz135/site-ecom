@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .notifications-container {
+        background: 
+            linear-gradient(rgba(248, 245, 240, 0.9), rgba(248, 245, 240, 0.9)),
+            url("{% static 'images/islamic-pattern-light.jpg' %}") center/cover no-repeat;
+        min-height: 100vh;
+        padding: 3rem 1rem;
+    }
+
+    .notifications-card {
+        background-color: rgba(255, 255, 255, 0.96);
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(58, 58, 58, 0.12);
+        padding: 2.5rem;
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid var(--islamic-gold-light);
+    }
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--islamic-sand-light);
+    }
+
+    .notifications-title {
+        color: var(--islamic-charcoal);
+        font-size: 1.8rem;
+        font-weight: 700;
+        font-family: 'Aref Ruqaa', serif;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .notification-badge {
+        background-color: var(--islamic-sage);
+        color: white;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .clear-all-btn {
+        background: none;
+        border: none;
+        color: var(--islamic-clay);
+        font-family: 'Amiri', serif;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .clear-all-btn:hover {
+        color: var(--islamic-gold);
+    }
+
+    .notification-list {
+        margin-top: 1.5rem;
+    }
+
+    .notification-item {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.2rem;
+        border-left: 4px solid var(--islamic-sand);
+        transition: all 0.3s ease;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .notification-item.unread {
+        border-left: 4px solid var(--islamic-gold);
+        background-color: rgba(210, 180, 140, 0.08);
+    }
+
+    .notification-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .notification-actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .mark-as-read {
+        background: none;
+        border: none;
+        color: var(--islamic-sage);
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    .mark-as-read:hover {
+        color: var(--islamic-gold);
+        transform: scale(1.1);
+    }
+
+    .notification-title {
+        color: var(--islamic-charcoal);
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        font-family: 'Amiri', serif;
+        padding-right: 2rem;
+    }
+
+    .notification-message {
+        color: var(--islamic-clay);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .notification-time {
+        color: var(--islamic-sand-dark);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .empty-notifications {
+        text-align: center;
+        padding: 3rem;
+        background-color: rgba(255,255,255,0.7);
+        border-radius: 12px;
+        border: 2px dashed var(--islamic-sand);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--islamic-sand);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-notifications h4 {
+        color: var(--islamic-charcoal);
+        font-family: 'Aref Ruqaa', serif;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-notifications p {
+        color: var(--islamic-clay);
+        font-family: 'Amiri', serif;
+    }
+
+    @media (max-width: 768px) {
+        .notifications-card {
+            padding: 1.5rem;
+        }
+        
+        .notifications-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .notification-item {
+            padding: 1.2rem;
+        }
+    }
+</style>
+
+<div class="notifications-container">
+    <div class="notifications-card">
+        <div class="notifications-header">
+            <h2 class="notifications-title">
+                <i class="fas fa-bell"></i>
+                Mes Notifications
+                {% if unread_count > 0 %}
+                <span class="notification-badge">{{ unread_count }}</span>
+                {% endif %}
+            </h2>
+            
+            {% if notifications %}
+            <form method="POST" action="{% url 'accounts:clear_notifications' %}">
+                {% csrf_token %}
+                <button type="submit" class="clear-all-btn">
+                    <i class="fas fa-trash-alt"></i> Tout effacer
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        
+        <div class="notification-list">
+            {% if notifications %}
+                {% for notif in notifications %}
+                <div class="notification-item {% if not notif.is_read %}unread{% endif %}" id="notification-{{ notif.id }}">
+                    <div class="notification-actions">
+                        {% if not notif.is_read %}
+                        <button class="mark-as-read" data-notif-id="{{ notif.id }}" title="Marquer comme lu">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="notification-title">
+                        <span>{{ notif.title }}</span>
+                    </div>
+                    <p class="notification-message">{{ notif.message }}</p>
+                    <div class="notification-time">
+                        <i class="far fa-clock"></i>
+                        {{ notif.created_at|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-notifications">
+                    <div class="empty-icon">
+                        <i class="far fa-bell-slash"></i>
+                    </div>
+                    <h4>Aucune notification</h4>
+                    <p>Vous serez notifié des activités importantes ici</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Inclure Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du clic sur les boutons "Marquer comme lu"
+    document.querySelectorAll('.mark-as-read').forEach(button => {
+        button.addEventListener('click', function() {
+            const notifId = this.getAttribute('data-notif-id');
+            markAsRead(notifId);
+        });
+    });
+});
+
+function markAsRead(notificationId) {
+    const url = `/accounts/mark_notification_as_read/${notificationId}/`;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erreur réseau');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const notification = document.getElementById(`notification-${notificationId}`);
+            if (notification) {
+                notification.classList.remove('unread');
+                
+                // Supprimer le bouton "Marquer comme lu"
+                const readButton = notification.querySelector('.mark-as-read');
+                if (readButton) {
+                    readButton.remove();
+                }
+                
+                // Mettre à jour le badge de compteur
+                updateUnreadCount();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la mise à jour de la notification');
+    });
+}
+
+function updateUnreadCount() {
+    const badge = document.querySelector('.notification-badge');
+    if (badge) {
+        const currentCount = parseInt(badge.textContent);
+        const newCount = currentCount - 1;
+        
+        if (newCount > 0) {
+            badge.textContent = newCount;
+        } else {
+            badge.remove();
+            // Mettre à jour l'icône de la cloche
+            const bellIcon = document.querySelector('.notifications-title i');
+            if (bellIcon) {
+                bellIcon.classList.remove('fa-bell');
+                bellIcon.classList.add('fa-bell-slash');
+            }
+        }
+    }
+}
+</script>
+
+{% endblock %}
