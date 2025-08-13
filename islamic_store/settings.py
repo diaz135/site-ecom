@@ -157,6 +157,9 @@ EMAIL_HOST_USER = 'ouattaraabdou1517@gmail.com'
 EMAIL_HOST_PASSWORD = 'rlcg wsrq eotp lmyi'
 DEFAULT_FROM_EMAIL = 'IslamicStore <ouattaraabdou1517@gmail.com>'
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 import os
 
 MEDIA_URL = '/media/'
