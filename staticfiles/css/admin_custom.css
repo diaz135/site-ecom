@@ -1,0 +1,5 @@
+.suit-logo {
+    background: url('/static/images/ton-logo.png') no-repeat left center;
+    background-size: contain;
+    height: 40px;
+}
